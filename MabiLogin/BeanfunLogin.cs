@@ -18,7 +18,7 @@ namespace BeanfunLogin
 {
     public enum LoginMethod { General, PlaySafe, QRCode }
 
-    partial class BeanfunLogin
+    partial class BeanfunLogin : IDisposable
     {
         //Mabinogi Config
         private readonly string service_code = "600309";
@@ -47,6 +47,18 @@ namespace BeanfunLogin
         public BeanfunLogin()
         {
             CookieContainer = new CookieContainer();
+        }
+
+        ~BeanfunLogin()
+        {
+            Dispose();
+        }
+
+        public void Dispose()
+        {
+            keepLogin = false;
+            LogOut();
+            GC.SuppressFinalize(this);
         }
 
         private HttpWebRequest CreateWebRequest(string uri)
@@ -95,6 +107,8 @@ namespace BeanfunLogin
 
             if (OnLoginCompleted != null)
                 OnLoginCompleted?.Invoke(this, null);
+
+            KeepLogin();
         }
 
         private async Task<string> GetSessionkeyAsync()
@@ -310,6 +324,34 @@ namespace BeanfunLogin
             }
             if (string.IsNullOrEmpty(bfWebToken))
                 throw new Exception("GetGameAccount Failed: No bfWebToken");
+        }
+
+        bool keepLogin = true;
+        private async void KeepLogin()
+        {
+            while (keepLogin)
+            {
+                var request = CreateWebRequest("http://tw.beanfun.com/beanfun_block/generic_handlers/echo_token.ashx?webtoken=1");
+
+                using (var response = await request.GetResponseAsync())
+                using (Stream ReceiveStream = response.GetResponseStream())
+                using (StreamReader readStream = new StreamReader(ReceiveStream, Encoding.UTF8))
+                {
+                    string result = readStream.ReadToEnd();
+                    Console.WriteLine(result);
+                    if (!result.Contains("ResultCode:1"))
+                        keepLogin = false;
+                }
+                if (keepLogin)
+                    await Task.Delay(60 * 1000);
+            }
+        }
+
+        private async void LogOut()
+        {
+            keepLogin = false;
+            var request = CreateWebRequest("https://tw.newlogin.beanfun.com/logout.aspx?service=999999_T0");
+            using (var response = await request.GetResponseAsync()) { }
         }
 
         private string ParseSkey(string uri)

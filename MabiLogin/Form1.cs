@@ -100,6 +100,12 @@ namespace MabiLogin
             accountList.Clear();
             listView1.Items.Clear();
             panel1.Enabled = false;
+
+            if (_BfLogin != null)
+            {
+                _BfLogin.Dispose();
+                _BfLogin = null;
+            }
             _BfLogin = new BeanfunLogin.BeanfunLogin();
             _BfLogin.OnLoginCompleted += (s, args) =>
                 {
