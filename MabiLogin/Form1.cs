@@ -55,6 +55,15 @@ namespace MabiLogin
             listView1.AutoResizeColumn(1, ColumnHeaderAutoResizeStyle.HeaderSize);
         }
 
+        private void Form1_FormClosed(object sender, FormClosedEventArgs e)
+        {
+            if (_BfLogin != null)
+            {
+                _BfLogin.Dispose();
+                _BfLogin = null;
+            }
+        }
+
         private void OpenMabiDir_Click(object sender, EventArgs e)
         {
             if (Directory.Exists(mabiVersion.MabiDir))
@@ -123,6 +132,8 @@ namespace MabiLogin
                     }
 
                     panel1.Enabled = true;
+                    listView1.Focus();
+                    listView1.Items[0].Selected = true;
                 };
             try
             {
@@ -179,6 +190,35 @@ namespace MabiLogin
         {
             loginGameAsync();
         }
+
+        private void listView1_KeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.KeyCode == Keys.Enter)
+            {
+                loginGameAsync();
+            }
+        }
+
+        private void listView1_ColumnClick(object sender, ColumnClickEventArgs e)
+        {
+            if (listView1.Sorting != SortOrder.Ascending)
+            {
+                listView1.Sorting = SortOrder.Ascending;
+                listView1.Sort();
+            }
+            else
+            {
+                listView1.Sorting = SortOrder.None;
+                listView1.Items.Clear();
+                foreach (var account in accountList.Values)
+                {
+                    string[] row = { System.Net.WebUtility.HtmlDecode(account.sname), account.sacc };
+                    var listViewItem = new ListViewItem(row);
+                    listView1.Items.Add(listViewItem);
+                }
+            }
+        }
+
         // ----------- GUI Function End----------- //
 
         private async void loginGameAsync()
@@ -207,6 +247,8 @@ namespace MabiLogin
             }
             if (checkBox_clipboard.Checked)
                 Clipboard.SetDataObject(textBox_gamePassword.Text, false, 5, 200);
+
+            listView1.Focus();
         }
 
         private void SaveAccount()
