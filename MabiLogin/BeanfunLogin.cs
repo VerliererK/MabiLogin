@@ -24,7 +24,7 @@ namespace BeanfunLogin
         private readonly string service_code = "600309";
         private readonly string service_region = "A2";
 
-        private const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36";
+        private const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
         private readonly int MillisecondsTimeout = 10 * 1000;
         private CookieContainer CookieContainer;
         private string bfWebToken;
@@ -139,8 +139,7 @@ namespace BeanfunLogin
                 { "__EVENTVALIDATION", eventvalidation },
                 { "t_AccountID", accountID },
                 { "t_Password", password },
-                { "btn_login.x", 1.ToString() },
-                { "btn_login.y", 1.ToString() }
+                { "btn_login", "登入" }
             };
 
             var requestPost = await CreateWebRequestPostAsync("https://tw.newlogin.beanfun.com/login/id-pass_form.aspx?skey=" + skey, postData);
