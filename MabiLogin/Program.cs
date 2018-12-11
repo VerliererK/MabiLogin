@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Windows.Forms;
 
 namespace MabiLogin
@@ -15,11 +13,11 @@ namespace MabiLogin
         {
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
-                String resourceName = "MabiLogin." +
+                string resourceName = "MabiLogin." +
                    new System.Reflection.AssemblyName(args.Name).Name + ".dll";
                 using (var stream = System.Reflection.Assembly.GetExecutingAssembly().GetManifestResourceStream(resourceName))
                 {
-                    Byte[] assemblyData = new Byte[stream.Length];
+                    byte[] assemblyData = new byte[stream.Length];
                     stream.Read(assemblyData, 0, assemblyData.Length);
                     return System.Reflection.Assembly.Load(assemblyData);
                 }

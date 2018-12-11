@@ -80,12 +80,16 @@ namespace MabiLogin
         {
             if (!File.Exists(mabiVersion.MabiDir + "\\" + "mabinogi.exe"))
                 return;
-            Process myProcess = Process.Start(
+            try
+            {
+                Process myProcess = Process.Start(
                 new ProcessStartInfo
                 {
                     WorkingDirectory = mabiVersion.MabiDir,
                     FileName = "mabinogi.exe"
                 });
+            }
+            catch { }
         }
 
         private void 一般登入ToolStripMenuItem_Click(object sender, EventArgs e)

@@ -32,7 +32,7 @@ namespace BeanfunLogin
             int j = 0;
             for (int i = 0; i < hexString.Length / 2; i++)
             {
-                s[i] = Byte.Parse(hexString[j].ToString() + hexString[j + 1].ToString(), System.Globalization.NumberStyles.HexNumber);
+                s[i] = byte.Parse(hexString[j].ToString() + hexString[j + 1].ToString(), System.Globalization.NumberStyles.HexNumber);
                 j += 2;
             }
             ICryptoTransform desencrypt = des.CreateDecryptor();

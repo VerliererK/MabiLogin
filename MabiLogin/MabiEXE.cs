@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using System.Management;
 using System.Windows.Forms;
 
@@ -14,7 +13,7 @@ namespace MabiLogin
             this.mabiVersion = mabiVersion;
         }
 
-        public void StartClient(Boolean userLogin, string gameAccount = "", string gamePassword = "")
+        public void StartClient(bool userLogin, string gameAccount = "", string gamePassword = "")
         {
             if (!mabiVersion.IsMabiExists()) return;
 
@@ -23,11 +22,11 @@ namespace MabiLogin
                 WorkingDirectory = mabiVersion.MabiDir,
                 FileName = "Client.exe"
             };
-            String cmdline = @"code:1622 ver:" + mabiVersion.MabiVer + @" logip:210.208.80.6 logport:11000 chatip:210.208.80.10 chatport:8004 setting:""file://data/features.xml=Regular, Taiwan""";
+            string cmdline = @"code:1622 ver:" + mabiVersion.MabiVer + @" logip:210.208.80.6 logport:11000 chatip:210.208.80.10 chatport:8004 setting:""file://data/features.xml=Regular, Taiwan""";
             if (userLogin)
                 cmdline = cmdline + " /N:" + gameAccount + " /V:" + gamePassword + " /T:gamania";
             _processStartInfo.Arguments = cmdline;
-            Process myProcess = Process.Start(_processStartInfo);
+            try { Process myProcess = Process.Start(_processStartInfo); } catch { }
         }
 
         public bool ExtractMabinogiProcess(out string account, out string password)
