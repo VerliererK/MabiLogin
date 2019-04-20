@@ -24,7 +24,8 @@ namespace MabiLogin
             playSafeToolStripMenuItem.BackColor = (method == LoginMethod.PlaySafe) ? Color.SkyBlue : SystemColors.Control;
             qRCodeToolStripMenuItem.BackColor = (method == LoginMethod.QRCode) ? Color.SkyBlue : SystemColors.Control;
 
-            label_password.Text = (method == LoginMethod.General) ? "Beanfun 密碼" : "PlaySafe PIN";
+            label_password.Text = (method == LoginMethod.PlaySafe) ? "PlaySafe PIN" : "Beanfun 密碼";
+            btn_login.Enabled = (method != LoginMethod.QRCode);
 
             textBox_beanfunPassword.MaxLength = (method == LoginMethod.PlaySafe) ? 8 : 100;
             textBox_beanfunPassword.Text = "";
@@ -104,7 +105,8 @@ namespace MabiLogin
 
         private void qRCodeToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            MessageBox.Show("Not Implement");
+            SetLoginMethod(LoginMethod.QRCode);
+            btn_login_ClickAsync(null, null);
         }
 
         private async void btn_login_ClickAsync(object sender, EventArgs e)

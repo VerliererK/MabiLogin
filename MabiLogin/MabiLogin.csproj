@@ -89,7 +89,8 @@
     <Compile Include="BeanfunAccount.cs" />
     <Compile Include="BeanfunLogin.cs" />
     <Compile Include="BeanfunLogin.PlaySafe.cs" />
-    <Compile Include="BeanfunLoign.OTP.cs" />
+    <Compile Include="BeanfunLogin.QRCode.cs" />
+    <Compile Include="BeanfunLogin.OTP.cs" />
     <Compile Include="FileFolderDialog.cs">
       <SubType>Component</SubType>
     </Compile>

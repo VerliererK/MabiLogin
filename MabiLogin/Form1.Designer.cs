@@ -83,7 +83,6 @@
             // 
             // qRCodeToolStripMenuItem
             // 
-            this.qRCodeToolStripMenuItem.Enabled = false;
             this.qRCodeToolStripMenuItem.Name = "qRCodeToolStripMenuItem";
             this.qRCodeToolStripMenuItem.Size = new System.Drawing.Size(120, 34);
             this.qRCodeToolStripMenuItem.Text = "QRCode";

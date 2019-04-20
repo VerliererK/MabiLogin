@@ -24,7 +24,7 @@ namespace BeanfunLogin
         private readonly string service_code = "600309";
         private readonly string service_region = "A2";
 
-        private const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/69.0.3497.100 Safari/537.36";
+        private const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/73.0.3683.103 Safari/537.36";
         private readonly int MillisecondsTimeout = 10 * 1000;
         private CookieContainer CookieContainer;
         private string bfWebToken;
@@ -100,6 +100,11 @@ namespace BeanfunLogin
                     var ps = await PlaySafeLoginAsync(account, password, skey);
                     akey = ps.Item1;
                     cardid = ps.Item2;
+                    break;
+                case LoginMethod.QRCode:
+                    akey = await QRCodeLoginAsync(skey);
+                    if (string.IsNullOrEmpty(akey))
+                        return;
                     break;
             }
 
@@ -226,6 +231,46 @@ namespace BeanfunLogin
             if (string.IsNullOrEmpty(akey))
                 throw new Exception("PlaySafeLogin Failed: No Authkey");
             return new Tuple<string, string>(akey, ps.cardid);
+        }
+
+        private async Task<string> QRCodeLoginAsync(string skey)
+        {
+            var request = CreateWebRequest("https://tw.newlogin.beanfun.com/generic_handlers/get_qrcodeData.ashx?skey=" + skey);
+
+            string strEncryptData = null;
+
+            using (var response = await WebRequestExtensions.GetResponseAsync(request, MillisecondsTimeout))
+            using (Stream ReceiveStream = response.GetResponseStream())
+            using (StreamReader readStream = new StreamReader(ReceiveStream, Encoding.UTF8))
+                while (!readStream.EndOfStream)
+                {
+                    string line = readStream.ReadLine();
+                    if (line.Contains("strEncryptData"))
+                    {
+                        Regex regex = new Regex("\"strEncryptData\": \"(.*)\"");
+                        if (regex.IsMatch(line))
+                        {
+                            strEncryptData = regex.Match(line).Groups[1].Value;
+                            break;
+                        }
+                    }
+                }
+
+            if (string.IsNullOrEmpty(strEncryptData))
+                throw new Exception("QRCodeLogin Failed: No strEncryptData");
+
+            bool Result = await ShowQRCode(strEncryptData);
+
+            if (Result)
+            {
+                var akey = await QRCodeCheckSuccessAsync(skey);
+                return akey;
+            }
+            else
+            {
+                return null;
+                //throw new Exception("QRCodeLogin Failed: No Authkey");
+            }
         }
 
         private async Task<Tuple<string, string>> GetASPInfo(string uri)
@@ -383,7 +428,7 @@ namespace BeanfunLogin
 
     internal static class WebRequestExtensions
     {
-        internal static Task<WebResponse> GetResponseAsync(this WebRequest request, int millisecondsTimeout)
+        internal static Task<WebResponse> GetResponseAsync(this WebRequest request, int millisecondsTimeout, bool throwException = true)
         {
             return Task.Factory.StartNew(() =>
             {
@@ -392,7 +437,7 @@ namespace BeanfunLogin
                     request.EndGetResponse,
                     null);
 
-                if (!t.Wait(millisecondsTimeout)) throw new TimeoutException();
+                if (!t.Wait(millisecondsTimeout) && throwException) throw new TimeoutException();
 
                 return t.Result;
             });
