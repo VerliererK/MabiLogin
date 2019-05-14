@@ -9,7 +9,7 @@ namespace MabiLogin
         /// 應用程式的主要進入點。
         /// </summary>
         [STAThread]
-        static void Main()
+        static void Main(string[] _args)
         {
             AppDomain.CurrentDomain.AssemblyResolve += (sender, args) =>
             {
@@ -27,7 +27,12 @@ namespace MabiLogin
                 NativeMethods.SetProcessDPIAware();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+			var form = new Form1();
+
+			if (_args.Length > 1)
+				form.QuickStart(_args[0], _args[1], _args.Length > 2 ? _args[2] : "");
+
+			Application.Run(form);
         }
     }
 

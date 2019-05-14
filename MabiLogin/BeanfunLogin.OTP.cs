@@ -36,7 +36,7 @@ namespace BeanfunLogin
                 j += 2;
             }
             ICryptoTransform desencrypt = des.CreateDecryptor();
-            return Encoding.ASCII.GetString(desencrypt.TransformFinalBlock(s, 0, s.Length));
+            return Encoding.ASCII.GetString(desencrypt.TransformFinalBlock(s, 0, s.Length)).Replace("\0", "");
         }
 
         private async System.Threading.Tasks.Task<string> GetOTPAsync(GameAccount acc, string service_code, string service_region)

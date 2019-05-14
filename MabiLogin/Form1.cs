@@ -109,6 +109,27 @@ namespace MabiLogin
             btn_login_ClickAsync(null, null);
         }
 
+		public async void QuickStart(string username, string password, string accountName)
+		{
+			try
+			{
+				Enabled = false;
+				var bf = new BeanfunLogin.BeanfunLogin();
+				await bf.Login(username, password, LoginMethod.General);
+				if (bf.accountList.Count > 0)
+				{
+					var account = bf.accountList.Find((a) => a.sacc == accountName);
+					if (account == null) account = bf.accountList[0];
+					var gamePassword = await bf.GetGamePasswordAsync(account);
+					mabiEXE.StartClient(true, account.sacc, gamePassword);
+				}
+			}
+			finally
+			{
+				Application.Exit();
+			}
+		}
+
         private async void btn_login_ClickAsync(object sender, EventArgs e)
         {
             if (accountList == null) accountList = new Dictionary<string, BeanfunLogin.BeanfunLogin.GameAccount>();
