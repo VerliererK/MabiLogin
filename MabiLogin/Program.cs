@@ -27,6 +27,9 @@ namespace MabiLogin
                 NativeMethods.SetProcessDPIAware();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            System.Net.ServicePointManager.SecurityProtocol = System.Net.SecurityProtocolType.Tls12;
+
 			var form = new Form1();
 
 			if (_args.Length > 1)
