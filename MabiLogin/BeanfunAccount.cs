@@ -19,6 +19,10 @@ namespace MabiLogin
 
         public void AddAccount(AccountInfo info)
         {
+            if (info.loginMethod == BeanfunLogin.LoginMethod.QRCode) return;
+            if (string.IsNullOrEmpty(info.username)) return;
+            if (string.IsNullOrEmpty(info.password)) return;
+
             if (list != null && !list.Contains(info))
             {
                 list.Add(info);
