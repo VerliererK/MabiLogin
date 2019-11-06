@@ -21,13 +21,11 @@ namespace MabiLogin
         {
             loginMethod = method;
             一般登入ToolStripMenuItem.BackColor = (method == LoginMethod.General) ? Color.SkyBlue : SystemColors.Control;
-            playSafeToolStripMenuItem.BackColor = (method == LoginMethod.PlaySafe) ? Color.SkyBlue : SystemColors.Control;
             qRCodeToolStripMenuItem.BackColor = (method == LoginMethod.QRCode) ? Color.SkyBlue : SystemColors.Control;
 
-            label_password.Text = (method == LoginMethod.PlaySafe) ? "PlaySafe PIN" : "Beanfun 密碼";
             btn_login.Enabled = (method != LoginMethod.QRCode);
 
-            textBox_beanfunPassword.MaxLength = (method == LoginMethod.PlaySafe) ? 8 : 100;
+            textBox_beanfunPassword.MaxLength = 100;
             textBox_beanfunPassword.Text = "";
         }
 
@@ -96,11 +94,6 @@ namespace MabiLogin
         private void 一般登入ToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SetLoginMethod(LoginMethod.General);
-        }
-
-        private void playSafeToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            SetLoginMethod(LoginMethod.PlaySafe);
         }
 
         private void qRCodeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -312,9 +305,6 @@ namespace MabiLogin
                 {
                     if (info.loginMethod == LoginMethod.General)
                         一般登入ToolStripMenuItem.DropDownItems.Add(info.username.ToString())
-                            .Click += (s, args) => AccountEnter(s, args, info);
-                    else if (info.loginMethod == LoginMethod.PlaySafe)
-                        playSafeToolStripMenuItem.DropDownItems.Add(info.username.ToString())
                             .Click += (s, args) => AccountEnter(s, args, info);
                     else if (info.loginMethod == LoginMethod.QRCode)
                         qRCodeToolStripMenuItem.DropDownItems.Add(info.username.ToString())

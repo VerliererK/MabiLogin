@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 /// </summary>
 namespace BeanfunLogin
 {
-    public enum LoginMethod { General, PlaySafe, QRCode }
+    public enum LoginMethod { General, QRCode }
 
     partial class BeanfunLogin : IDisposable
     {
@@ -96,11 +96,6 @@ namespace BeanfunLogin
                 case LoginMethod.General:
                     akey = await GeneralLoginAsync(account, password, skey);
                     break;
-                case LoginMethod.PlaySafe:
-                    var ps = await PlaySafeLoginAsync(account, password, skey);
-                    akey = ps.Item1;
-                    cardid = ps.Item2;
-                    break;
                 case LoginMethod.QRCode:
                     akey = await QRCodeLoginAsync(skey);
                     if (string.IsNullOrEmpty(akey))
@@ -155,82 +150,6 @@ namespace BeanfunLogin
             if (string.IsNullOrEmpty(akey))
                 throw new Exception("GeneralLogin Failed: No Authkey");
             return akey;
-        }
-
-        private async Task<Tuple<string, string>> PlaySafeLoginAsync(string accountID, string password, string skey)
-        {
-            var info = await GetASPInfo("https://tw.newlogin.beanfun.com/login/playsafe_form.aspx?skey=" + skey);
-            string viewstate = info.Item1;
-            string eventvalidation = info.Item2;
-            string sotp = null;
-            DateTime date = DateTime.Now;
-            string d = (date.Year - 1900).ToString() + (date.Month - 1).ToString() + date.Day.ToString() + date.Hour.ToString() + date.Minute.ToString() + date.Second.ToString() + date.Millisecond.ToString();
-
-            var request = CreateWebRequest("https://tw.newlogin.beanfun.com/generic_handlers/get_security_otp.ashx?d=" + d);
-            using (var response = await WebRequestExtensions.GetResponseAsync(request, MillisecondsTimeout))
-            using (Stream ReceiveStream = response.GetResponseStream())
-            using (StreamReader readStream = new StreamReader(ReceiveStream, Encoding.UTF8))
-                while (!readStream.EndOfStream)
-                {
-                    string line = readStream.ReadLine();
-                    if (line.Contains("<playsafe_otp>"))
-                    {
-                        Regex regex = new Regex("<playsafe_otp>(\\w+)</playsafe_otp>");
-                        if (regex.IsMatch(line))
-                            sotp = regex.Match(line).Groups[1].Value;
-                    }
-                }
-
-            if (string.IsNullOrEmpty(sotp))
-                throw new Exception("PlaySafe Failed: No Playsafe_otp");
-
-            PlaySafe ps = new PlaySafe();
-            var readername = ps.GetReader();
-            if (string.IsNullOrEmpty(readername))
-                throw new Exception("PlaySafe Failed: No ReaderName");
-            if (string.IsNullOrEmpty(ps.cardType))
-                throw new Exception("PlaySafe Failed: No CardType");
-
-            string original = null;
-            string signature = null;
-            if (ps.cardType == "F")
-            {
-                ps.cardid = ps.GetPublicCN(readername);
-                if (string.IsNullOrEmpty(ps.cardid)) throw new Exception("PlaySafe Failed: No CardID");
-                var opinfo = ps.GetOPInfo(readername, password);
-                if (string.IsNullOrEmpty(opinfo)) throw new Exception("PlaySafe Failed: No OpInfo");
-                original = ps.cardType + "~" + sotp + "~" + accountID + "~" + opinfo;
-                signature = ps.EncryptData(readername, password, original);
-                if (string.IsNullOrEmpty(signature)) throw new Exception("PlaySafe Failed: No EncryptedData");
-            }
-            else if (ps.cardType == "G")
-            {
-                original = ps.cardType + "~" + sotp + "~" + accountID + "~";
-                signature = ps.FSCAPISign(password, original);
-            }
-
-            NameValueCollection postData = new NameValueCollection
-            {
-                { "__VIEWSTATE", viewstate },
-                { "__EVENTVALIDATION", eventvalidation },
-                { "card_check_id", ps.cardid },
-                { "original", original },
-                { "signature", signature },
-                { "serverotp", sotp },
-                { "t_AccountID", accountID },
-                { "t_Password", password },
-                { "btn_login", "Login" },
-                { "btn_login.y", 1.ToString() }
-            };
-
-            var requestPost = await CreateWebRequestPostAsync("https://tw.newlogin.beanfun.com/login/playsafe_form.aspx?skey=" + skey, postData);
-
-            string akey = string.Empty;
-            using (var response = await WebRequestExtensions.GetResponseAsync(requestPost, MillisecondsTimeout))
-                akey = ParseAkey(response.ResponseUri.ToString());
-            if (string.IsNullOrEmpty(akey))
-                throw new Exception("PlaySafeLogin Failed: No Authkey");
-            return new Tuple<string, string>(akey, ps.cardid);
         }
 
         private async Task<string> QRCodeLoginAsync(string skey)
@@ -314,12 +233,6 @@ namespace BeanfunLogin
         {
             await GetbfWebTokenAsync(skey, akey);
             string authUri = "https://tw.beanfun.com/beanfun_block/auth.aspx?channel=game_zone&page_and_query=game_start.aspx%3Fservice_code_and_region%3D" + service_code + "_" + service_region + "&web_token=" + bfWebToken;
-            if (method == LoginMethod.PlaySafe)
-            {
-                authUri += "&cardid=" + Uri.EscapeDataString(cardid);
-                var info = await GetASPInfo(authUri);
-                authUri += "&__VIEWSTATE=" + Uri.EscapeDataString(info.Item1) + "&__EVENTVALIDATION=" + Uri.EscapeDataString(info.Item2) + "&btnCheckPLASYSAFE=Hidden+Button";
-            }
 
             var request = CreateWebRequest(authUri);
             using (var response = await WebRequestExtensions.GetResponseAsync(request, MillisecondsTimeout))

@@ -74,13 +74,6 @@
             this.一般登入ToolStripMenuItem.Text = "一般登入";
             this.一般登入ToolStripMenuItem.Click += new System.EventHandler(this.一般登入ToolStripMenuItem_Click);
             // 
-            // playSafeToolStripMenuItem
-            // 
-            this.playSafeToolStripMenuItem.Name = "playSafeToolStripMenuItem";
-            this.playSafeToolStripMenuItem.Size = new System.Drawing.Size(119, 34);
-            this.playSafeToolStripMenuItem.Text = "PlaySafe";
-            this.playSafeToolStripMenuItem.Click += new System.EventHandler(this.playSafeToolStripMenuItem_Click);
-            // 
             // qRCodeToolStripMenuItem
             // 
             this.qRCodeToolStripMenuItem.Name = "qRCodeToolStripMenuItem";
