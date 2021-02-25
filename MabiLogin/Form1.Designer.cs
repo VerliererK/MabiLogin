@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(Form1));
             this.menuStrip1 = new System.Windows.Forms.MenuStrip();
             this.一般登入ToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.playSafeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.qRCodeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.launchExeToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.btn_exeInfo = new System.Windows.Forms.Button();
@@ -58,33 +57,32 @@
             this.menuStrip1.ImageScalingSize = new System.Drawing.Size(20, 20);
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.一般登入ToolStripMenuItem,
-            this.playSafeToolStripMenuItem,
             this.qRCodeToolStripMenuItem,
             this.launchExeToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(622, 38);
+            this.menuStrip1.Size = new System.Drawing.Size(622, 40);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
             // 一般登入ToolStripMenuItem
             // 
             this.一般登入ToolStripMenuItem.Name = "一般登入ToolStripMenuItem";
-            this.一般登入ToolStripMenuItem.Size = new System.Drawing.Size(121, 34);
+            this.一般登入ToolStripMenuItem.Size = new System.Drawing.Size(129, 36);
             this.一般登入ToolStripMenuItem.Text = "一般登入";
             this.一般登入ToolStripMenuItem.Click += new System.EventHandler(this.一般登入ToolStripMenuItem_Click);
             // 
             // qRCodeToolStripMenuItem
             // 
             this.qRCodeToolStripMenuItem.Name = "qRCodeToolStripMenuItem";
-            this.qRCodeToolStripMenuItem.Size = new System.Drawing.Size(120, 34);
+            this.qRCodeToolStripMenuItem.Size = new System.Drawing.Size(128, 36);
             this.qRCodeToolStripMenuItem.Text = "QRCode";
             this.qRCodeToolStripMenuItem.Click += new System.EventHandler(this.qRCodeToolStripMenuItem_Click);
             // 
             // launchExeToolStripMenuItem
             // 
             this.launchExeToolStripMenuItem.Name = "launchExeToolStripMenuItem";
-            this.launchExeToolStripMenuItem.Size = new System.Drawing.Size(148, 34);
+            this.launchExeToolStripMenuItem.Size = new System.Drawing.Size(157, 36);
             this.launchExeToolStripMenuItem.Text = "LaunchEXE";
             // 
             // btn_exeInfo
@@ -272,7 +270,6 @@
         #endregion
 
         private System.Windows.Forms.MenuStrip menuStrip1;
-        private System.Windows.Forms.ToolStripMenuItem playSafeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem launchExeToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem 一般登入ToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem qRCodeToolStripMenuItem;

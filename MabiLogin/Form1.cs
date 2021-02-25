@@ -299,7 +299,6 @@ namespace MabiLogin
                 beanfunAccount.LoadAccount();
                 if (beanfunAccount.list == null) return;
                 一般登入ToolStripMenuItem.DropDownItems.Clear();
-                playSafeToolStripMenuItem.DropDownItems.Clear();
                 qRCodeToolStripMenuItem.DropDownItems.Clear();
                 foreach (var info in beanfunAccount.list)
                 {
