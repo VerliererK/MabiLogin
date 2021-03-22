@@ -164,9 +164,10 @@ namespace BeanfunLogin
                 while (!readStream.EndOfStream)
                 {
                     string line = readStream.ReadLine();
+                    line = line.Replace(" ", "");
                     if (line.Contains("strEncryptData"))
                     {
-                        Regex regex = new Regex("\"strEncryptData\": \"([^\"]+)\"");
+                        Regex regex = new Regex("\"strEncryptData\":\"([^\"]+)\"");
                         if (regex.IsMatch(line))
                         {
                             strEncryptData = regex.Match(line).Groups[1].Value;
