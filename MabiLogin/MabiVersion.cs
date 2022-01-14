@@ -24,7 +24,8 @@ namespace MabiLogin
                 FindMabiDir();
 
             mabiUserVer = GetMabiUserVer();
-            GetMabiPatchVer();
+            //GetMabiPatchVer();
+            GetMabiVerFromBulletins();
         }
 
         public string MabiDir
@@ -159,12 +160,12 @@ namespace MabiLogin
                         if (content.Contains("main_version="))
                         {
                             string v = content.Substring(content.IndexOf("main_version=") + "main_version=".Length, 3);
-                            mabiPatchVer = Math.Max(mabiPatchVer, UInt16.Parse(v));
+                            mabiPatchVer = Math.Max(mabiPatchVer, ushort.Parse(v));
                         }
                         if (content.Contains("local_version="))
                         {
                             string v = content.Substring(content.IndexOf("local_version=") + "local_version=".Length, 3);
-                            mabiPatchVer = Math.Max(mabiPatchVer, UInt16.Parse(v));
+                            mabiPatchVer = Math.Max(mabiPatchVer, ushort.Parse(v));
                         }
                         CheckMabiVersionSync();
                     }
@@ -172,6 +173,32 @@ namespace MabiLogin
                         MessageBox.Show("與官網確認版本失敗 : " + e.Error.Message);
                 };
                 client.DownloadStringAsync(new Uri("http://tw.cdnpatch.mabinogi.beanfun.com/mabinogi/patch.txt"));
+            }
+        }
+
+        private void GetMabiVerFromBulletins()
+        {
+            using (var client = new WebClient())
+            {
+                client.Encoding = Encoding.UTF8;
+                client.DownloadStringCompleted += (s, e) =>
+                {
+                    mabiPatchVer = 0;
+                    if (e.Error == null)
+                    {
+                        string content = e.Result;
+                        var reg = new System.Text.RegularExpressions.Regex("Ver\\.([0-9]+)");
+                        var match = reg.Match(content);
+                        if (match.Success)
+                        {
+                            mabiPatchVer = ushort.Parse(match.Groups[1].Value);
+                            CheckMabiVersionSync();
+                        }
+                    }
+                    if (mabiPatchVer == 0)
+                        MessageBox.Show("與官網確認版本失敗 : " + e.Error.Message);
+                };
+                client.DownloadStringAsync(new Uri("https://tw.beanfun.com/mabinogi/Bulletins/include/BulletinGetValueTab.aspx?kind=24&ServiceType=5&pagesize=16"));
             }
         }
 
