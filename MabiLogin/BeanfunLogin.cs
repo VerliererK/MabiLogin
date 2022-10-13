@@ -24,7 +24,7 @@ namespace BeanfunLogin
         private readonly string service_code = "600309";
         private readonly string service_region = "A2";
 
-        private const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/76.0.3809.132 Safari/537.36";
+        private const string UserAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36 Edg/106.0.1370.42";
         private readonly int MillisecondsTimeout = 10 * 1000;
         private CookieContainer CookieContainer;
         private string bfWebToken;
